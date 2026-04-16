@@ -1,7 +1,23 @@
-## Facial Emotion Recognition Using Computer Vision with GenAI-Based Personalized Multimedia Recommendations
+# Facial Emotion Recognition Using Computer Vision with GenAI-Based Personalized Multimedia Recommendations
 
-## Description
-A smart system that detects facial emotions in real-time and recommends personalized multimedia content (music, movies, etc.) based on the detected emotion. Like a smart DJ who looks at your face, figures out your mood, and plays the perfect song for that moment.
+## Team Project
+
+This project was developed as part of a 5-member final year team project.
+
+## My Contributions
+
+- Designed and implemented facial emotion detection pipeline using deep learning models (ResNet, Swin Transformer)
+- Integrated GenAI-based personalized multimedia recommendation system
+- Contributed to data preprocessing, model evaluation, and system integration
+- Built an end-to-end system combining computer vision with intelligent recommendation workflows
+
+## Project Context
+
+This repository represents my implementation and understanding of the team project.
+
+## Overview
+
+An intelligent system that performs real-time facial emotion recognition using deep learning models and generates personalized multimedia recommendations through generative AI.
 
 ## 🚀 Features
 - **Real-time Emotion Detection**: Detects 7 emotions (happy, sad, angry, surprised, fear, disgust, neutral)
@@ -38,12 +54,11 @@ A smart system that detects facial emotions in real-time and recommends personal
 
 ## Steps
 
-## 1.Clone the repository:
-git clone https://github.com/NerusuKavya/Facial-Emotion-Recognition-and-Personalized-Multimedia-Recommendations.git
-
+### 1. Clone the repository:
+git clone https://github.com/PalankiVarshitha/Facial-Emotion-Recognition-and-Personalized-Multimedia-Recommendations.git
 cd Facial-Emotion-Recognition-and-Personalized-Multimedia-Recommendations
 
-## 2. Create a virtual environment:
+### 2. Create a virtual environment:
 python -m venv venv
 
 On Windows:
@@ -54,11 +69,11 @@ On Mac/Linux:
 
 source venv/bin/activate
 
-## 3.Install dependencies:
+### 3. Install dependencies:
 
 pip install -r fer_genai/requirements.txt
 
-## 4.Run the application:
+### 4. Run the application:
 cd fer_genai
 
 python app.py
