@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results - EmotionAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .animate-scaleIn {
+            animation: scaleIn 0.5s ease-out;
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-slideUp {
+            animation: slideUp 0.6s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 min-h-screen">
+    
+    <nav class="bg-white/80 backdrop-blur-md shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">EmotionAI</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/upload" class="text-gray-700 hover:text-indigo-600 font-medium transition">New Detection</a>
+                    <a href="/history" class="text-gray-700 hover:text-indigo-600 font-medium transition">History</a>
+                    <a href="/logout" class="text-gray-700 hover:text-indigo-600 font-medium transition">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 py-12">
+        <div class="text-center mb-12 animate-scaleIn">
+            <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full mb-6">
+                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <h1 class="text-5xl font-bold text-gray-900 mb-4">Emotion Detected!</h1>
+            <p class="text-2xl text-gray-600">We found your emotion is <span class="text-indigo-600 font-bold capitalize">{{ emotion }}</span></p>
+            {% if session.get('recommendation_error') %}
+            <div class="mt-4 text-red-600 font-semibold">
+                ⚠️ Unable to generate recommendations right now due to API quota limits or an error. Please try again later or upgrade your plan.
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-12 mb-6 animate-slideUp">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Personalized Recommendations</h2>
+            
+            <!-- Category Tabs -->
+            <div class="mb-8 border-b border-gray-200">
+                <div class="flex space-x-6">
+                    <button class="category-tab pb-4 px-2 border-b-2 border-purple-600 text-purple-600 font-semibold transition" data-category="songs">
+                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                        </svg>
+                        Songs
+                    </button>
+                    <button class="category-tab pb-4 px-2 border-b-2 border-transparent text-gray-600 font-semibold hover:text-blue-600 transition" data-category="movies">
+                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path>
+                        </svg>
+                        Movies
+                    </button>
+                    <button class="category-tab pb-4 px-2 border-b-2 border-transparent text-gray-600 font-semibold hover:text-indigo-600 transition" data-category="books">
+                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        Books
+                    </button>
+                </div>
+            </div>
+            
+            {% if recommendations %}
+            <!-- Songs Tab Content -->
+            <div id="songs-content" class="category-content">
+                {% if recommendations.songs %}
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">Songs for You</h3>
+                    </div>
+                    <ul class="space-y-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for song in recommendations.songs %}
+                        <li class="flex items-start space-x-3 text-gray-700 bg-white p-3 rounded-lg">
+                            <span class="text-purple-600 font-bold flex-shrink-0">{{ loop.index }}.</span>
+                            <span class="text-lg">{{ song }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Movies Tab Content -->
+            <div id="movies-content" class="category-content hidden">
+                {% if recommendations.movies %}
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">Movies for You</h3>
+                    </div>
+                    <ul class="space-y-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for movie in recommendations.movies %}
+                        <li class="flex items-start space-x-3 text-gray-700 bg-white p-3 rounded-lg">
+                            <span class="text-blue-600 font-bold flex-shrink-0">{{ loop.index }}.</span>
+                            <span class="text-lg">{{ movie }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Books Tab Content -->
+            <div id="books-content" class="category-content hidden">
+                {% if recommendations.books %}
+                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">Books for You</h3>
+                    </div>
+                    <ul class="space-y-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for book in recommendations.books %}
+                        <li class="flex items-start space-x-3 text-gray-700 bg-white p-3 rounded-lg">
+                            <span class="text-indigo-600 font-bold flex-shrink-0">{{ loop.index }}.</span>
+                            <span class="text-lg">{{ book }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/upload" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl transition transform hover:scale-105 text-center">
+                Detect Another Emotion
+            </a>
+            <a href="/history" class="bg-white text-indigo-600 px-8 py-4 rounded-xl font-semibold text-lg border-2 border-indigo-600 hover:bg-indigo-50 transition text-center">
+                View History
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
+                
+                // Hide all content
+                document.querySelectorAll('.category-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                // Remove active styling from all tabs
+                document.querySelectorAll('.category-tab').forEach(t => {
+                    t.classList.remove('border-b-purple-600', 'text-purple-600', 'border-b-blue-600', 'text-blue-600', 'border-b-indigo-600', 'text-indigo-600', 'border-b-2');
+                    t.classList.add('border-b-transparent', 'text-gray-600');
+                });
+                
+                // Show selected content
+                document.getElementById(category + '-content').classList.remove('hidden');
+                
+                // Add active styling to clicked tab
+                this.classList.remove('border-b-transparent', 'text-gray-600');
+                this.classList.add('border-b-2');
+                
+                if (category === 'songs') {
+                    this.classList.add('border-b-purple-600', 'text-purple-600');
+                } else if (category === 'movies') {
+                    this.classList.add('border-b-blue-600', 'text-blue-600');
+                } else if (category === 'books') {
+                    this.classList.add('border-b-indigo-600', 'text-indigo-600');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

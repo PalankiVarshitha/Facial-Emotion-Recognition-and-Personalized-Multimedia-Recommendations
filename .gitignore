@@ -1,0 +1,15 @@
+venv/ 
+fer_genai/venv/ 
+__pycache__/ 
+*.pyc 
+*.pyo 
+*.pyd 
+.Python 
+env/ 
+ENV/ 
+.vscode/ 
+.idea/ 
+.env 
+*.db 
+.ipynb_checkpoints/ 
+uploads/ 

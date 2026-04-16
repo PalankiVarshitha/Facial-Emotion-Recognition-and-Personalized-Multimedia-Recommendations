@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detect Emotion - EmotionAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-pulse-slow {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        #video {
+            transform: scaleX(-1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 min-h-screen">
+    
+    <nav class="bg-white/80 backdrop-blur-md shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">EmotionAI</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/history" class="text-gray-700 hover:text-indigo-600 font-medium transition">History</a>
+                    <a href="/logout" class="text-gray-700 hover:text-indigo-600 font-medium transition">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-3">Detect Your Emotion</h1>
+            <p class="text-xl text-gray-600">Position your face in the camera and capture</p>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-2xl p-8 mb-6">
+            <div class="relative bg-gray-900 rounded-2xl overflow-hidden mb-6" style="aspect-ratio: 4/3;">
+                <video id="video" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+                <canvas id="canvas" class="hidden"></canvas>
+                <img id="capturedImage" class="w-full h-full object-cover hidden" alt="Captured image">
+                
+                <!-- Initial state: Start webcam button -->
+                <div id="startWebcamContainer" class="absolute inset-0 flex items-center justify-center bg-gray-900 text-white">
+                    <div class="text-center p-6">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-lg mb-4">Ready to capture your emotion?</p>
+                        <button id="startWebcamBtn" 
+                                class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl transition transform hover:scale-105 flex items-center justify-center space-x-2 mx-auto">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Start Webcam</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Webcam active state -->
+                <div id="webcamActiveContainer" class="hidden absolute inset-0">
+                    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                        <button id="captureBtn" 
+                                class="bg-gradient-to-r from-green-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition transform hover:scale-105 flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>Capture Image</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Captured image state -->
+                <div id="capturedContainer" class="hidden absolute inset-0">
+                    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4">
+                        <button id="recaptureBtn" 
+                                class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition transform hover:scale-105 flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            <span>Recapture</span>
+                        </button>
+                        <button id="detectBtn" 
+                                class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition transform hover:scale-105 flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                            <span>Detect Emotion</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="cameraError" class="hidden absolute inset-0 flex items-center justify-center bg-gray-900 text-white">
+                    <div class="text-center p-6">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <p class="text-lg">Camera access denied or unavailable</p>
+                        <p class="text-sm text-gray-400 mt-2">Please enable camera permissions</p>
+                    </div>
+                </div>
+
+                <div id="loadingOverlay" class="hidden absolute inset-0 bg-black/70 flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent mb-4"></div>
+                        <p class="text-white text-lg font-semibold">Analyzing emotion...</p>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const capturedImage = document.getElementById('capturedImage');
+        const startWebcamBtn = document.getElementById('startWebcamBtn');
+        const captureBtn = document.getElementById('captureBtn');
+        const recaptureBtn = document.getElementById('recaptureBtn');
+        const detectBtn = document.getElementById('detectBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const cameraError = document.getElementById('cameraError');
+        const startWebcamContainer = document.getElementById('startWebcamContainer');
+        const webcamActiveContainer = document.getElementById('webcamActiveContainer');
+        const capturedContainer = document.getElementById('capturedContainer');
+        
+        let stream = null;
+        let capturedImageData = null;
+
+        async function initCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'user'
+                    } 
+                });
+                video.srcObject = stream;
+                video.classList.remove('hidden');
+                startWebcamContainer.classList.add('hidden');
+                webcamActiveContainer.classList.remove('hidden');
+            } catch (err) {
+                console.error('Camera error:', err);
+                cameraError.classList.remove('hidden');
+                startWebcamBtn.disabled = true;
+                startWebcamBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            video.classList.add('hidden');
+        }
+
+        startWebcamBtn.addEventListener('click', () => {
+            startWebcamBtn.disabled = true;
+            startWebcamBtn.innerHTML = `
+                <div class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-2"></div>
+                <span>Starting...</span>
+            `;
+            initCamera();
+        });
+
+        captureBtn.addEventListener('click', () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+            
+            capturedImageData = canvas.toDataURL('image/png');
+            capturedImage.src = capturedImageData;
+            
+            // Hide video and show captured image
+            video.classList.add('hidden');
+            capturedImage.classList.remove('hidden');
+            webcamActiveContainer.classList.add('hidden');
+            capturedContainer.classList.remove('hidden');
+        });
+
+        recaptureBtn.addEventListener('click', () => {
+            // Show video again
+            capturedImage.classList.add('hidden');
+            video.classList.remove('hidden');
+            capturedContainer.classList.add('hidden');
+            webcamActiveContainer.classList.remove('hidden');
+            capturedImageData = null;
+        });
+
+        detectBtn.addEventListener('click', async () => {
+            if (!capturedImageData) {
+                alert('Please capture an image first.');
+                return;
+            }
+
+            loadingOverlay.classList.remove('hidden');
+            detectBtn.disabled = true;
+            recaptureBtn.disabled = true;
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image: capturedImageData })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Stop camera before redirecting
+                    stopCamera();
+                    window.location.href = data.redirect || '/results';
+                } else {
+                    loadingOverlay.classList.add('hidden');
+                    detectBtn.disabled = false;
+                    recaptureBtn.disabled = false;
+                    
+                    if (data.error === 'No face detected') {
+                        alert('⚠️ No face detected!\n\nPlease make sure:\n• Your face is clearly visible\n• You are facing the camera\n• Lighting is adequate\n• Camera is not blocked');
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to process image. Please try again.');
+                loadingOverlay.classList.add('hidden');
+                detectBtn.disabled = false;
+                recaptureBtn.disabled = false;
+            }
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            stopCamera();
+        });
+    </script>
+    </script>
+</body>
+</html>
